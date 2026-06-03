@@ -109,9 +109,44 @@ Both frontend and backend use strict TypeScript settings with:
 - Proper module resolution
 - Decorator support (required for NestJS)
 
+## Frontend Architecture — Feature Slice Design (FSD)
+
+The frontend follows [Feature Slice Design](https://feature-sliced.design/) methodology. Layers from high-level to low-level:
+
+```
+src/
+  app/         # Next.js App Router routes (thin wrappers only — import from pages/)
+  views/       # FSD pages layer — full page components composed from widgets/features
+               # (named "views" instead of "pages" to avoid Next.js Pages Router conflict)
+  widgets/     # Complex self-contained UI blocks combining multiple features/entities
+  features/    # User-facing functionality slices (e.g. features/auth)
+               #   ui/       — React components for this feature
+               #   api/      — API calls specific to this feature
+               #   model/    — state, stores, hooks, types
+  entities/    # Business entities (e.g. entities/user)
+               #   model/    — types, stores, selectors
+               #   ui/       — entity display components
+  shared/      # Reusable infrastructure, no business logic
+               #   api/      — base fetch wrapper (base.ts)
+               #   ui/       — shadcn/ui components (button, input, card, form, label…)
+               #   lib/      — utility functions (utils.ts with cn())
+```
+
+**Key rules:**
+- Imports go strictly downward: `app → pages → widgets → features → entities → shared`
+- No cross-slice imports within the same layer (e.g. features/auth must not import features/expenses)
+- `src/app/` route files are thin: they only import and render the matching `src/pages/` component
+- shadcn/ui components live in `shared/ui/<component-name>/index.tsx`
+
+## UI Components — shadcn/ui
+
+shadcn/ui components are manually maintained in `shared/ui/`. Available components:
+- `button`, `input`, `label`, `card`, `form`
+
+CSS design tokens (colors, radius) are defined as CSS variables in `globals.css` and mapped in `tailwind.config.ts`.
+
 ## Notes
 
-- This is a fresh project with minimal scaffolding—use this as a foundation for building features
 - Frontend uses Tailwind CSS v4 with PostCSS
 - Backend uses experimental decorators required by NestJS
 - The monorepo structure allows independent optimization of frontend and backend

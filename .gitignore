@@ -1,7 +1,41 @@
+# OS
 .DS_Store
+Thumbs.db
 
+# Dependencies
 node_modules/
 
+# Build artifacts
+backend/dist
+frontend/.next
+frontend/out
+frontend/.turbo
+.turbo
+
+# Environment files
+.env
+.env.local
+.env.*.local
 backend/.env.local
 
-backend/dist
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS temp files
+.tmp/
+temp/
