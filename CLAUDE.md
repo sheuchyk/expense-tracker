@@ -145,6 +145,37 @@ shadcn/ui components are manually maintained in `shared/ui/`. Available componen
 
 CSS design tokens (colors, radius) are defined as CSS variables in `globals.css` and mapped in `tailwind.config.ts`.
 
+## Commit Conventions
+
+Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>(<scope>): <subject>
+```
+
+**Types:**
+- `feat` — a new feature
+- `fix` — a bug fix
+- `docs` — documentation only
+- `style` — formatting, no code change
+- `refactor` — code change that neither fixes a bug nor adds a feature
+- `perf` — performance improvement
+- `test` — adding or fixing tests
+- `build` — build system or dependencies
+- `chore` — other changes that don't modify src or test files
+
+**Rules:**
+- `scope` is optional and names the affected module/area (e.g. `transactions`, `auth`, `prisma`).
+- `subject` is in the imperative mood, lowercase, no trailing period.
+- Keep the subject under ~72 characters; add a body for extra context, separated by a blank line.
+
+**Examples:**
+```
+feat(transactions): add transaction CRUD module with CQRS
+fix(auth): reject expired JWT tokens
+docs: document commit conventions
+```
+
 ## Notes
 
 - Frontend uses Tailwind CSS v4 with PostCSS
