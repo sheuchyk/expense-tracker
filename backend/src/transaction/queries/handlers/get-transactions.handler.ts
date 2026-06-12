@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { GetTransactionsQuery } from '../get-transactions.query';
 import { TransactionRepository } from '../../transaction.repository';
-import { Prisma, Transaction, TransactionType } from '@prisma/client';
+import { Transaction } from '@prisma/client';
 
 export interface TransactionsSummary {
   totalIncome: string;
@@ -12,6 +12,10 @@ export interface TransactionsSummary {
 export interface GetTransactionsResult {
   transactions: Transaction[];
   summary: TransactionsSummary;
+  total: number;
+  page: number;
+  limit: number;
+  pageCount: number;
 }
 
 @QueryHandler(GetTransactionsQuery)
@@ -19,26 +23,28 @@ export class GetTransactionsHandler implements IQueryHandler<GetTransactionsQuer
   constructor(private readonly transactionRepository: TransactionRepository) {}
 
   async execute(query: GetTransactionsQuery): Promise<GetTransactionsResult> {
-    const transactions = await this.transactionRepository.findManyByUser(query.userId, query.filter);
+    const { month, year } = query.filter;
+    const page = query.filter.page ?? 1;
+    const limit = query.filter.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    let totalIncome = new Prisma.Decimal(0);
-    let totalExpense = new Prisma.Decimal(0);
-
-    for (const tx of transactions) {
-      if (tx.type === TransactionType.income) {
-        totalIncome = totalIncome.add(tx.amount);
-      } else {
-        totalExpense = totalExpense.add(tx.amount);
-      }
-    }
+    const [transactions, total, sums] = await Promise.all([
+      this.transactionRepository.findManyByUser(query.userId, { month, year, skip, take: limit }),
+      this.transactionRepository.countByUser(query.userId, { month, year }),
+      this.transactionRepository.sumByUser(query.userId, { month, year }),
+    ]);
 
     return {
       transactions,
       summary: {
-        totalIncome: totalIncome.toFixed(2),
-        totalExpense: totalExpense.toFixed(2),
-        balance: totalIncome.sub(totalExpense).toFixed(2),
+        totalIncome: sums.income.toFixed(2),
+        totalExpense: sums.expense.toFixed(2),
+        balance: sums.income.sub(sums.expense).toFixed(2),
       },
+      total,
+      page,
+      limit,
+      pageCount: Math.max(1, Math.ceil(total / limit)),
     };
   }
 }

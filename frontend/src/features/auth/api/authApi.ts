@@ -1,5 +1,5 @@
 import { apiRequest } from '@/shared/api/base';
-import type { AuthResponse } from '@/entities/user/model/types';
+import type { AuthResponse, User } from '@/entities/user/model/types';
 
 export interface LoginDto {
   email: string;
@@ -24,4 +24,6 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(dto),
     }),
+
+  me: () => apiRequest<User>('/auth/me'),
 };
