@@ -1,7 +1,16 @@
-const API_URL = 'http://localhost:3001/api';
+import { authStorage } from '@/shared/lib/auth-storage';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
+
+export class ApiError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+  const token = authStorage.getToken();
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -15,8 +24,8 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   const response = await fetch(`${API_URL}${path}`, { ...options, headers });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Ошибка запроса' }));
-    throw new Error(error.message || 'Ошибка запроса');
+    const body = await response.json().catch(() => ({ message: 'Ошибка запроса' }));
+    throw new ApiError(response.status, body.message || 'Ошибка запроса');
   }
 
   return response.json();

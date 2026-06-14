@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
-import { transactionsApi } from '@/features/transactions/api/transactionsApi';
-import type { TransactionsPage } from '@/entities/transaction/model/types';
-
-const PAGE_SIZE = 10;
+import { transactionsApi, DEFAULT_PAGE_SIZE } from '@/features/transactions';
+import type { TransactionsPage } from '@/entities/transaction';
 
 function formatAmount(amount: string, type: 'income' | 'expense'): string {
   const sign = type === 'income' ? '+' : '−';
@@ -22,17 +21,27 @@ function formatDate(iso: string): string {
 }
 
 export function RecentTransactions() {
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const page = Math.max(1, Number(searchParams.get('page') ?? '1'));
+
   const [data, setData] = useState<TransactionsPage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(newPage));
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
     setError(null);
     transactionsApi
-      .list({ page, limit: PAGE_SIZE })
+      .list({ page, limit: DEFAULT_PAGE_SIZE })
       .then((res) => {
         if (!cancelled) setData(res);
       })
@@ -97,7 +106,7 @@ export function RecentTransactions() {
               variant="outline"
               size="sm"
               disabled={page <= 1 || isLoading}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => navigate(page - 1)}
             >
               Назад
             </Button>
@@ -105,7 +114,7 @@ export function RecentTransactions() {
               variant="outline"
               size="sm"
               disabled={page >= pageCount || isLoading}
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => navigate(page + 1)}
             >
               Вперёд
             </Button>

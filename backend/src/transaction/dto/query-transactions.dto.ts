@@ -11,6 +11,8 @@ export class QueryTransactionsDto {
 
   @IsOptional()
   @IsInt()
+  @Min(1970)
+  @Max(2100)
   @Type(() => Number)
   year?: number;
 

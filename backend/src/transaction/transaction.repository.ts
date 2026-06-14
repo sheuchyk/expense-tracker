@@ -27,9 +27,9 @@ export class TransactionRepository {
   async findManyByUser(userId: number, filter: PageFilter): Promise<Transaction[]> {
     return this.prisma.transaction.findMany({
       where: { userId, ...this.buildDateWhere(filter) },
-      orderBy: { date: 'desc' },
-      ...(filter.skip !== undefined ? { skip: filter.skip } : {}),
-      ...(filter.take !== undefined ? { take: filter.take } : {}),
+      orderBy: [{ date: 'desc' }, { id: 'desc' }],
+      skip: filter.skip,
+      take: filter.take,
     });
   }
 

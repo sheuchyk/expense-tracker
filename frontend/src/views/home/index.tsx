@@ -1,32 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { MainMenu } from '@/widgets/main-menu/ui/MainMenu';
-import { RecentTransactions } from '@/widgets/recent-transactions/ui/RecentTransactions';
-import { UserProfile } from '@/widgets/user-profile/ui/UserProfile';
+import { Suspense } from 'react';
+import { MainMenu } from '@/widgets/main-menu';
+import { RecentTransactions } from '@/widgets/recent-transactions';
+import { UserProfile } from '@/widgets/user-profile';
+import { useRequireAuth } from '@/features/auth';
 
 export function HomePage() {
-  const router = useRouter();
-  const [authChecked, setAuthChecked] = useState(false);
+  const ready = useRequireAuth();
 
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      router.replace('/login');
-      return;
-    }
-    setAuthChecked(true);
-  }, [router]);
-
-  if (!authChecked) return null;
+  if (!ready) return null;
 
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
         <UserProfile />
         <MainMenu />
-        <RecentTransactions />
+        <Suspense>
+          <RecentTransactions />
+        </Suspense>
       </div>
     </main>
   );
