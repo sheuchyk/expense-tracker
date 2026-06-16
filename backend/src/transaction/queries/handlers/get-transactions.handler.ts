@@ -9,12 +9,19 @@ export interface TransactionsSummary {
   balance: string;
 }
 
+/** Paginated result returned by GetTransactionsQuery. */
 export interface GetTransactionsResult {
+  /** Transactions for the requested page. */
   transactions: Transaction[];
+  /** Aggregated income / expense / balance totals for the applied filter (not just the current page). */
   summary: TransactionsSummary;
+  /** Total number of transactions matching the filter. */
   total: number;
+  /** Current page number (1-based). */
   page: number;
+  /** Maximum number of transactions per page. */
   limit: number;
+  /** Total number of pages; always ≥ 1. */
   pageCount: number;
 }
 
