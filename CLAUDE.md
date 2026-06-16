@@ -169,6 +169,28 @@ git push -u origin feat/<short-name>
 # open PR → review → squash merge → delete branch
 ```
 
+**Pull Request format:**
+
+- **Title** follows Conventional Commits: `feat(scope): short imperative subject` (≤ 72 chars).
+- **Body** uses this template:
+
+```markdown
+## Summary
+- <what was implemented — one bullet per logical area>
+- <endpoints added / changed, if any>
+
+## Changes
+- **Backend**: <key backend changes>
+- **Frontend**: <key frontend changes>
+
+## Test plan
+- [ ] <step to manually verify the happy path>
+- [ ] <edge case or regression check>
+```
+
+- Target branch is always `master`.
+- Prefer squash merge; the squash commit message must also follow Conventional Commits.
+
 ## Commit Conventions
 
 Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
