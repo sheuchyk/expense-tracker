@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent } from '@/shared/ui/card';
 import { authApi, useLogout } from '@/features/auth';
-import { ApiError } from '@/shared/api/base';
 import type { User } from '@/entities/user';
 
 export function UserProfile() {
@@ -21,11 +20,7 @@ export function UserProfile() {
       })
       .catch((err) => {
         if (cancelled) return;
-        if (err instanceof ApiError && err.status === 401) {
-          logout();
-        } else {
-          setError(err instanceof Error ? err.message : 'Не удалось загрузить профиль');
-        }
+        setError(err instanceof Error ? err.message : 'Не удалось загрузить профиль');
       });
     return () => {
       cancelled = true;

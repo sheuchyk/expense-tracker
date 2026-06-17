@@ -19,6 +19,7 @@ export class QueryTransactionsDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(10_000)
   @Type(() => Number)
   page?: number;
 

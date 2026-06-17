@@ -25,6 +25,10 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({ message: 'Ошибка запроса' }));
+    if (response.status === 401) {
+      authStorage.clearToken();
+      if (typeof window !== 'undefined') window.location.replace('/login');
+    }
     throw new ApiError(response.status, body.message || 'Ошибка запроса');
   }
 

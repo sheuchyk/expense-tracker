@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
@@ -30,14 +30,15 @@ export function RecentTransactions() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const navigate = (newPage: number) => {
+  const navigate = useCallback((newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', String(newPage));
     router.replace(`${pathname}?${params.toString()}`);
-  };
+  }, [searchParams, router, pathname]);
 
   useEffect(() => {
     let cancelled = false;
+    setData(null);
     setIsLoading(true);
     setError(null);
     transactionsApi
