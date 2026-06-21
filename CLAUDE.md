@@ -145,6 +145,52 @@ shadcn/ui components are manually maintained in `shared/ui/`. Available componen
 
 CSS design tokens (colors, radius) are defined as CSS variables in `globals.css` and mapped in `tailwind.config.ts`.
 
+## Branching — GitHub Flow
+
+The project follows [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow):
+
+**Rules:**
+- `master` is the default and always-deployable branch. Never commit directly to `master`.
+- Every change (feature, fix, refactor, docs) starts from a fresh branch created off the latest `master`.
+- Branch names use the pattern `<type>/<short-kebab-case-description>`, where `<type>` matches a Conventional Commit type (`feat`, `fix`, `docs`, `refactor`, `chore`, etc.).
+  - Examples: `feat/main-screen`, `fix/auth-token-expiry`, `refactor/transactions-cqrs`.
+- Keep branches short-lived and focused on a single change. Push early and often.
+- Open a Pull Request into `master` as soon as the branch is ready for review (draft PRs are fine for work-in-progress).
+- Merge only after review and green CI. Prefer **squash merge** to keep `master` history linear and aligned with Conventional Commits.
+- Delete the branch after merge (locally and on the remote).
+
+**Typical workflow:**
+```bash
+git checkout master
+git pull
+git checkout -b feat/<short-name>
+# ...work, commit (see Commit Conventions below)...
+git push -u origin feat/<short-name>
+# open PR → review → squash merge → delete branch
+```
+
+**Pull Request format:**
+
+- **Title** follows Conventional Commits: `feat(scope): short imperative subject` (≤ 72 chars).
+- **Body** uses this template:
+
+```markdown
+## Summary
+- <what was implemented — one bullet per logical area>
+- <endpoints added / changed, if any>
+
+## Changes
+- **Backend**: <key backend changes>
+- **Frontend**: <key frontend changes>
+
+## Test plan
+- [ ] <step to manually verify the happy path>
+- [ ] <edge case or regression check>
+```
+
+- Target branch is always `master`.
+- Prefer squash merge; the squash commit message must also follow Conventional Commits.
+
 ## Commit Conventions
 
 Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:

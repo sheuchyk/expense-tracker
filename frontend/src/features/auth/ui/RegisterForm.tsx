@@ -11,6 +11,7 @@ import { Input } from '@/shared/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/form';
 import { authApi } from '../api/authApi';
+import { authStorage } from '@/shared/lib/auth-storage';
 
 const registerSchema = z
   .object({
@@ -43,7 +44,7 @@ export function RegisterForm() {
         email: values.email,
         password: values.password,
       });
-      localStorage.setItem('accessToken', accessToken);
+      authStorage.setToken(accessToken);
       router.push('/');
     } catch (err) {
       setServerError(err instanceof Error ? err.message : 'Ошибка регистрации');

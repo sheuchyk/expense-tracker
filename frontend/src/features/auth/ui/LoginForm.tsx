@@ -11,6 +11,7 @@ import { Input } from '@/shared/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/form';
 import { authApi } from '../api/authApi';
+import { authStorage } from '@/shared/lib/auth-storage';
 
 const loginSchema = z.object({
   email: z.string().email('Введите корректный email'),
@@ -32,7 +33,7 @@ export function LoginForm() {
     setServerError(null);
     try {
       const { accessToken } = await authApi.login(values);
-      localStorage.setItem('accessToken', accessToken);
+      authStorage.setToken(accessToken);
       router.push('/');
     } catch (err) {
       setServerError(err instanceof Error ? err.message : 'Ошибка входа');
