@@ -2,6 +2,10 @@ import { IsString, IsNumber, IsPositive, IsEnum, IsDateString, IsInt, IsOptional
 import { Type } from 'class-transformer';
 import { TransactionType } from '@prisma/client';
 
+/**
+ * Payload accepted by `PATCH /transactions/:id`. Every field is optional —
+ * only provided keys are updated. Same value rules as `CreateTransactionDto`.
+ */
 export class UpdateTransactionDto {
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })

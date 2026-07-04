@@ -227,3 +227,8 @@ docs: document commit conventions
 - Frontend uses Tailwind CSS v4 with PostCSS
 - Backend uses experimental decorators required by NestJS
 - The monorepo structure allows independent optimization of frontend and backend
+
+
+## Документация
+После изменения методов — обновляй JSDoc.
+Для DTO и контроллеров — добавляй/обновляй Swagger декораторы.
