@@ -9,8 +9,18 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
+    "test": "jest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
+  },
+  "jest": {
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testEnvironment": "node"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
@@ -32,13 +42,17 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.1.28",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/passport-jwt": "^4.0.1",
     "eslint": "^9.0.0",
+    "jest": "^30.4.2",
     "prettier": "^3.0.0",
     "prisma": "^6.0.0",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.0.0"
   }
 }
