@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { transactionsApi, DEFAULT_PAGE_SIZE } from '@/features/transactions';
 import type { TransactionsPage } from '@/entities/transaction';
+import { cn } from '@/shared/lib/utils';
 
 function formatAmount(amount: string, type: 'income' | 'expense'): string {
   const sign = type === 'income' ? '+' : '−';
@@ -30,11 +31,14 @@ export function RecentTransactions() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const navigate = useCallback((newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(newPage));
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [searchParams, router, pathname]);
+  const navigate = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', String(newPage));
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [searchParams, router, pathname],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -62,66 +66,84 @@ export function RecentTransactions() {
   const transactions = data?.transactions ?? [];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Последние транзакции</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {isLoading && <p className="text-sm text-muted-foreground">Загрузка...</p>}
+    <section className="rounded-3xl bg-surface p-6 shadow-soft">
+      <h2 className="font-display text-lg font-bold tracking-tight text-ink">
+        Последние операции
+      </h2>
+
+      <div className="mt-5">
+        {isLoading && <p className="py-8 text-center text-sm text-muted-foreground">Загрузка…</p>}
         {!isLoading && error && (
-          <p className="text-sm font-medium text-destructive">{error}</p>
+          <p className="py-8 text-center text-sm font-medium text-negative">{error}</p>
         )}
         {!isLoading && !error && transactions.length === 0 && (
-          <p className="text-sm text-muted-foreground">Транзакций пока нет.</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Операций пока нет. Добавьте первую транзакцию.
+          </p>
         )}
         {!isLoading && !error && transactions.length > 0 && (
-          <ul className="divide-y divide-border">
-            {transactions.map((tx) => (
-              <li key={tx.id} className="flex items-center justify-between gap-4 py-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{tx.description}</p>
-                  <p className="text-xs text-muted-foreground">{formatDate(tx.date)}</p>
-                </div>
-                <p
-                  className={
-                    tx.type === 'income'
-                      ? 'shrink-0 text-sm font-semibold text-emerald-600'
-                      : 'shrink-0 text-sm font-semibold text-destructive'
-                  }
+          <ul className="flex flex-col gap-1">
+            {transactions.map((tx) => {
+              const income = tx.type === 'income';
+              return (
+                <li
+                  key={tx.id}
+                  className="flex items-center gap-4 rounded-2xl px-2 py-3 transition-colors hover:bg-secondary"
                 >
-                  {formatAmount(tx.amount, tx.type)}
-                </p>
-              </li>
-            ))}
+                  <span
+                    className={cn(
+                      'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
+                      income ? 'bg-mint text-mint-ink' : 'bg-peach text-peach-ink',
+                    )}
+                  >
+                    {income ? (
+                      <ArrowDownLeft className="h-5 w-5" strokeWidth={2} />
+                    ) : (
+                      <ArrowUpRight className="h-5 w-5" strokeWidth={2} />
+                    )}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-ink">{tx.description}</p>
+                    <p className="text-xs text-muted-foreground">{formatDate(tx.date)}</p>
+                  </div>
+                  <p
+                    className={cn(
+                      'shrink-0 text-sm font-bold tabular-nums',
+                      income ? 'text-positive' : 'text-ink',
+                    )}
+                  >
+                    {formatAmount(tx.amount, tx.type)}
+                  </p>
+                </li>
+              );
+            })}
           </ul>
         )}
+      </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <p className="text-xs text-muted-foreground">
-            {total > 0
-              ? `Страница ${page} из ${pageCount} · всего ${total}`
-              : 'Нет данных'}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1 || isLoading}
-              onClick={() => navigate(page - 1)}
-            >
-              Назад
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= pageCount || isLoading}
-              onClick={() => navigate(page + 1)}
-            >
-              Вперёд
-            </Button>
-          </div>
+      <div className="mt-5 flex items-center justify-between border-t border-border/70 pt-4">
+        <p className="text-xs text-muted-foreground">
+          {total > 0 ? `Страница ${page} из ${pageCount} · всего ${total}` : 'Нет данных'}
+        </p>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1 || isLoading}
+            onClick={() => navigate(page - 1)}
+          >
+            Назад
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= pageCount || isLoading}
+            onClick={() => navigate(page + 1)}
+          >
+            Вперёд
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

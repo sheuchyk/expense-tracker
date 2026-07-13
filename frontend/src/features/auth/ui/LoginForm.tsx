@@ -43,7 +43,7 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Вход</CardTitle>
+        <CardTitle className="font-display text-xl">Вход</CardTitle>
         <CardDescription>Войдите в свой аккаунт</CardDescription>
       </CardHeader>
       <CardContent>
