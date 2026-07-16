@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Build output
+frontend/.next
+frontend/out
+backend/dist
+**/dist
+**/build
+
+# Generated files
+backend/prisma/generated
+**/*.generated.*
+frontend/next-env.d.ts
+
+# Coverage & logs
+coverage
+*.log
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
