@@ -71,6 +71,7 @@ src/
 ```
 
 **Key rules:**
+
 - Imports flow strictly downward: `app → views → widgets → features → entities → shared`
 - No cross-slice imports within the same layer (e.g. `features/auth` must not import `features/transactions`)
 - `src/app/` route files stay thin: they only import and render the matching `src/views/` component
@@ -79,6 +80,7 @@ src/
 ## UI Components — shadcn/ui
 
 shadcn/ui components are manually maintained in `src/shared/ui/`. Currently available:
+
 - `button`, `card`, `form`, `input`, `label`
 
 CSS design tokens (colors, radius) are defined as CSS variables in `globals.css` and mapped in `tailwind.config.ts`. When adding a new shadcn component, keep the folder pattern `shared/ui/<name>/index.tsx`.
@@ -90,4 +92,4 @@ Use `react-hook-form` with `zod` schemas resolved through `@hookform/resolvers/z
 ## Notes
 
 - Tailwind CSS v4 uses the new PostCSS plugin (`@tailwindcss/postcss`).
-- ESLint runs via `next lint` — resolve warnings before opening a PR.
+- ESLint uses flat config (`eslint.config.mjs`) and runs via `eslint .` (`next lint` was removed in Next 16) — resolve warnings before opening a PR.

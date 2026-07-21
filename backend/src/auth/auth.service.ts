@@ -18,10 +18,10 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const existing = await this.queryBus.execute(new GetUserByEmailQuery(dto.email));
+    const existing = await this.queryBus.execute<GetUserByEmailQuery, User | null>(new GetUserByEmailQuery(dto.email));
     if (existing) throw new ConflictException('User already exists');
 
-    const user = await this.commandBus.execute(
+    const user = await this.commandBus.execute<CreateUserCommand, User>(
       new CreateUserCommand(dto.name, dto.email, dto.password),
     );
     return {

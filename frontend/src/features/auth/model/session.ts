@@ -1,22 +1,27 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { authStorage } from '@/shared/lib/auth-storage';
 
+// Токен не меняется в течение жизни хука — подписка не нужна, читаем снапшот.
+const noopSubscribe = () => () => {};
+
 export function useRequireAuth(): boolean {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const hasToken = useSyncExternalStore(
+    noopSubscribe,
+    () => Boolean(authStorage.getToken()),
+    () => false, // на сервере токена нет — рендерим как «не готово»
+  );
 
   useEffect(() => {
-    if (!authStorage.getToken()) {
+    if (!hasToken) {
       router.replace('/login');
-    } else {
-      setReady(true);
     }
-  }, [router]);
+  }, [hasToken, router]);
 
-  return ready;
+  return hasToken;
 }
 
 export function useLogout() {

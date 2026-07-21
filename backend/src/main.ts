@@ -6,9 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Expense Tracker API')
@@ -22,4 +20,4 @@ async function bootstrap() {
   await app.listen(3001);
 }
 
-bootstrap();
+void bootstrap();
