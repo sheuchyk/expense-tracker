@@ -43,5 +43,8 @@ coverage/
 .tmp/
 temp/
 
+# Playwright MCP session artifacts (page snapshots, console logs)
+.playwright-mcp/
+
 
 .claude/settings.local.json
