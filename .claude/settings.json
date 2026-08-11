@@ -54,5 +54,13 @@
   },
   "enabledPlugins": {
     "javascript-typescript@claude-code-workflows": true
+  },
+  "extraKnownMarketplaces": {
+    "expense-tracker-market": {
+      "source": {
+        "source": "github",
+        "repo": "sheuchyk/expense-tracker-market-my"
+      }
+    }
   }
 }
